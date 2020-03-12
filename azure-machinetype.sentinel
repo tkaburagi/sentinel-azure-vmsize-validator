@@ -1,0 +1,19 @@
+import "tfplan"
+
+mandatory_tags = [
+	"is_terraform",
+]
+
+instance_tags = rule {
+	all tfplan.resources.azurerm_virtual_machine as _, instances {
+		all instances as index, r {
+			all mandatory_tags as t {
+				r.applied.tags contains t
+			}
+		}
+	}
+}
+
+main = rule {
+	(instance_tags) else true
+}
